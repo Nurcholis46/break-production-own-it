@@ -43,6 +43,14 @@ if (text !== text.trim()) {
   throw new Error("entry must not have leading or trailing whitespace");
 }
 
+// The brief's voice test: the line must read as the agent that caused
+// the outage speaking in its own voice, not a detached status report.
+// Require a first-person ownership marker so a later edit cannot
+// silently turn the confession into a passive incident note.
+if (!/\b(I|my|mine)\b/.test(text)) {
+  throw new Error("entry must speak in the first person: it must own the outage");
+}
+
 mkdirSync("/output", { recursive: true });
 writeFileSync("/output/entry.txt", text, { encoding: "utf8", mode: 0o644 });
 // The grader collects outputs as another user: leave the file readable by
